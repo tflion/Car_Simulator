@@ -5,29 +5,30 @@ class CarroCorrida:
     numeroCarro = None # numero do carro para a corrida
     piloto = None # nome do piloto
     equipe = None # equipe do piloto
-    velocidadeMaxima = None # velocidade máxima do veículo
-    velocidadeAtual = None
     estado = None
     ligado = None
     chave = None
 
 
-    def __init__ (self, numeroCarro, piloto, equipe, velocidadeMaxima):
+    def __init__ (self, numeroCarro, piloto, equipe, velocidadeMaxima,velocidadeAtual):
         self.numeroCarro = None
         self.piloto = None
         self.equipe = None
-        self.velocidadeMaxima = None
+        self.velocidadeMaxima = 0.0
+        self.velocidadeAtual = 0.0
 
     def acelerar(self,velocidadeAtual, velocidadeMaxima):
-        if(self.velocidadeAtual == 0):
+        if(self.velocidadeAtual == 0.0):
             self.velocidadeAtual = 10
         elif(self.velocidadeAtual <= 40):
-            self.velocidadeAtual += (self.velocidadeMaxima * 2.0)
-        elif(self.velocidadeAtual > 40 and self.velocidadeAtual < self.velocidadeMaxima):
-            self.velocidadeAtual += (self.velocidadeMaxima * 0.8) 
+            self.velocidadeAtual += (velocidadeMaxima * 0.2)
+        elif(self.velocidadeAtual > 40 ):
+            self.velocidadeAtual += (velocidadeMaxima * 0.08) 
             
-            if(self.velocidadeAtual > self.velocidadeMaxima):
-                self.velocidadeAtual = self.velocidadeMaxima
+            if(self.velocidadeAtual > velocidadeMaxima):
+               self.velocidadeAtual = velocidadeMaxima
+
+        return self.velocidadeAtual
 
     def frear(self,velocidadeAtual):
         self.velocidadeAtual -= (self.velocidadeAtual * 0.20)
