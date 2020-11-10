@@ -1,3 +1,6 @@
+#Autor: Thales Fernandes Leão
+#Nome projeto: Car Simulator
+
 from ClassCorrida import CarroCorrida #Importando a classe de Corrida
 
 confirmacao = False #Caso a validação de dados seja realizada com sucesso, a confirmação encerra o formulario
@@ -6,7 +9,7 @@ validaEquipe = None #Valida o nome da equipe do usuário
 validaDados = None #Valida se os dados informados do veículo e usuário estão corretos
 decisao = None #Verifica a opção da simulação escolhida pelo usuário
 
-currentSpeed = 0.0 #velocidade atual do veiculo, não informada pelo usuário, começa em 0
+estado = None
 
 print("")
 user = input("Favor informar o seu nome: ") #Pegando o nome do piloto do veículo e passando para o Atributo "Piloto" da classe Corrida
@@ -72,13 +75,13 @@ while confirmacao == False:
     validaDados = input("Os dados informados acima estão corretos? [ (S) - Sim | (N) - Não ] : ") #Verificação que o usário se está certo ou não
 
     if(validaDados == "Sim" or validaDados == "sim" or validaDados == "S" or validaDados == "s"): #Este formulário irá repetir até o usuário informar que os dados estão corretos
-        veiculo = CarroCorrida(numCar,user,team,maxSpeed,currentSpeed)
+        veiculo = CarroCorrida(numCar, user, team, maxSpeed) #passando as informações para o construtor de veículo
         
         confirmacao = True #O formulário será finalizado
 
         #Iniciando a simulação no veículo
 
-        while decisao != 6:
+        while decisao != 6: #Enquanto a escolha for diferente de 6 irá repetir o menu
             pass
             print("\n" * 20) #Forma de limpar o console quebrando linhas
 
@@ -93,35 +96,106 @@ while confirmacao == False:
             print("")
             decisao = int(input("Sua escolha: ")) #Decisão do usuário no simulador
 
-            if(decisao == 1):
-                CarroCorrida.chave = True #Se o usuário escolher ligar o Veículo, a chave recebe true pois ela foi girada
-                CarroCorrida.ligado = True #Se o usuário girar a chave, o veículo fica em estado ligado
-                print("\n" * 30) #Forma de limpar o console quebrando linhas
-                print("* Você rodou a chave e ligou o veículo")
-                print("")
-                input("Press 'ENTER' para continuar.")
-            if(decisao == 2):
-                if(CarroCorrida.ligado == True): #Verifica se o carro está ligado antes de tudo
+            if(decisao == 1): #Escolheu ligar o veículo
 
-                    acelerou = veiculo.acelerar(currentSpeed,maxSpeed) #Se estiver ligado, ele usa o método de acelerar de acordo com a
+                if(veiculo.chave != True): #Se a chave NÃO estiver rodada, ela será ligada.
+                    veiculo.ligar() #Se o usuário escolher ligar o Veículo, a chave recebe true pois ela foi girada
+                    print("\n" * 30) #Forma de limpar o console quebrando linhas
+                    print("* Você rodou a chave e ligou o veículo!")
+                    print("")
+                    input("Press 'ENTER' para continuar.")
+
+                    
+                elif(veiculo.chave == True): #Se a chave já estiver rodada
+                    print("\n" * 30) #Forma de limpar o console quebrando linhas
+                    print("* O veículo já está ligado!")
+                    print("")
+                    input("Press 'ENTER' para continuar.")
+
+            elif(decisao == 2): #Escolheu acelerar
+                if(veiculo.chave == True): #Verifica se o carro está ligado antes de acelerar
+
+                    currentSpeed = veiculo.acelerar(maxSpeed) #Se estiver ligado, ele usa o método de acelerar de acordo com a
                     # velocidade atual e a velocidade máxima do veículo
+                    veiculo.estado = True #O veículo estará andando
 
                     print("\n" * 30) #Forma de limpar o console quebrando linhas
-                    print("* Você acelerou o veículo")
+                    print("* Você acelerou o veículo!")
                     print("")
-                    print("A velocidade atual é de: ", acelerou)
+                    print("A velocidade atual é de: ", currentSpeed)
                     print("A velocidade máxima é de: ", maxSpeed)
                     input("Press 'ENTER' para continuar.")
 
                    
                 else:
                     print("\n" * 30) #Forma de limpar o console quebrando linhas
-                    print("* Você precisar ligar o veículo antes de acelerar") #O usuário tentou acelerar antes de ligar o veículo
+                    print("* Você precisar ligar o veículo antes de acelerar!") #O usuário tentou acelerar antes de ligar o veículo
                     print("")
                     input("Press 'ENTER' para continuar.")
-                
+
+            elif(decisao == 3): #Escolheu frear o veículo
+                if(veiculo.chave == True): #Verifica se o carro está ligado antes de frear
+
+                    currentSpeed = veiculo.frear(currentSpeed) # Se tiver ligado o veículo vai acelerar de acordo com a velocidade atual.
+                    
+                    print("\n" * 30) #Forma de limpar o console quebrando linhas
+                    print("* Você freou um pouco o veículo!")
+                    print("")
+                    print("A velocidade atual é de ", currentSpeed)
+                    input("Press 'ENTER' para continuar.")
+                else:
+                    print("\n" * 30) #Forma de limpar o console quebrando linhas
+                    print("* Você precisar ligar o veículo antes de frear!") #O usuário tentou acelerar antes de ligar o veículo
+                    print("")
+                    input("Press 'ENTER' para continuar.")
+            elif(decisao == 4): #Escolheu parar o veículo
+                if(veiculo.chave == True):
+                    
+                    parar = veiculo.parar(veiculo.velocidadeAtual) #Recebe o resultado da função de parar
+
+                    if(parar == False): #Se estiver false, o carro vai estar parado
+                        veiculo.estado = False
+                        print("\n" * 30) #Forma de limpar o console quebrando linhas
+                        print("* O veículo está parado!")
+                        print("")
+                        input("Press 'ENTER' para continuar.")
+                    else:
+                        print("\n" * 30) #Forma de limpar o console quebrando linhas
+                        print("* Você precisa estar a 0 Km/h para parar o veículo!")
+                        print("")
+                        input("Press 'ENTER' para continuar.")
+                else:
+                    print("\n" * 30) #Forma de limpar o console quebrando linhas
+                    print("* O veículo está desligado, logo você está parado!") #O usuário tentou parar o carro com o carro desligado
+                    print("")
+                    input("Press 'ENTER' para continuar.")    
+            elif(decisao == 5): #Escolheu desligar o carro
+                if(veiculo.chave != False): #Se a chave do carro não estiver False, ele está ligado
+                    if(veiculo.estado == False): #Verifica se o carro está parado
+                        veiculo.desligar() #Se o usuário escolher desligar o Veículo, a chave recebe false pois ela foi girada ao contrário
+                        print("\n" * 30) #Forma de limpar o console quebrando linhas
+                        print("* Você rodou a chave e desligou o veículo!")
+                        print("")
+                        input("Press 'ENTER' para continuar.")
+                    elif(veiculo.estado == True): #Se o usuário tentar parar o carro com ele em movimento
+                        print("\n" * 30) #Forma de limpar o console quebrando linhas
+                        print("* Você deve parar o veículo antes de desligá-lo!")
+                        print("")
+                        input("Press 'ENTER' para continuar.")              
+                elif(veiculo.chave == False): #Se o usuário tentar desligar o carro com ele desligado
+                    print("\n" * 30) #Forma de limpar o console quebrando linhas
+                    print("* O veículo já está desligado!")
+                    print("")
+                    input("Press 'ENTER' para continuar.")        
     else:
         confirmacao = False #O formulário irá repetir
+
+    print("\n" * 30) #Forma de limpar o console quebrando linhas
+    print("                         *    OBRIGADO POR UTILIZAR O SIMULADOR :)     *")
+    print("                                           Até Logo! ")
+    print("\n" * 3)
+
+    
 
 
 
